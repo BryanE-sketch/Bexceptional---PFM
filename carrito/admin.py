@@ -17,3 +17,6 @@ class CarritoAdmin(admin.ModelAdmin):
     search_fields = ("usuario__email",)
     inlines = [LineaCarritoInline]
     readonly_fields = ("usuario", "creado", "actualizado")
+
+    def has_add_permission(self, request):
+        return False  # los carritos se crean desde la tienda, no a mano
