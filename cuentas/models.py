@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.functions import Lower
 
 
 class UsuarioManager(BaseUserManager):
@@ -11,7 +12,7 @@ class UsuarioManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("El correo electrónico es obligatorio.")
-        email = self.normalize_email(email)
+        email = self.normalize_email(email).lower()  # siempre en minúsculas
         user = self.model(email=email, **extra_fields)
         user.set_password(password)  # guarda el hash, nunca la contraseña en claro
         user.save(using=self._db)
@@ -31,6 +32,10 @@ class UsuarioManager(BaseUserManager):
             raise ValueError("El superusuario debe tener is_superuser=True.")
         return self._create_user(email, password, **extra_fields)
 
+    def get_by_natural_key(self, email):
+        """Inicio de sesión sin distinguir mayúsculas: Ana@x.com = ana@x.com."""
+        return self.get(email__iexact=email)
+
 
 class Usuario(AbstractUser):
     """Usuario de Bexceptional: inicia sesión con su correo electrónico."""
@@ -46,6 +51,15 @@ class Usuario(AbstractUser):
     class Meta:
         verbose_name = "usuario"
         verbose_name_plural = "usuarios"
+        constraints = [
+            # La base de datos impide dos cuentas con el mismo correo,
+            # aunque cambien mayúsculas y minúsculas
+            models.UniqueConstraint(Lower("email"), name="correo_unico_sin_mayusculas"),
+        ]
+
+    def clean(self):
+        super().clean()
+        self.email = self.email.lower()
 
     def __str__(self):
         return self.email
