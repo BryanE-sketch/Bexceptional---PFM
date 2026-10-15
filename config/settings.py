@@ -41,7 +41,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Apps de Bexceptional
+    'cuentas',
+    'catalogo',
+    'carrito',
+    'pedidos',
+    'contenido',
+    'resenas',
 ]
+
+# Modelo de usuario propio (inicio de sesión con correo)
+AUTH_USER_MODEL = 'cuentas.Usuario'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
