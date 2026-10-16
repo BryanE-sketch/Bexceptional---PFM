@@ -22,7 +22,7 @@ class CuentasTests(TestCase):
             get_user_model().objects.create(email="JUAN@test.com")
 
     def test_el_inicio_de_sesion_queda_registrado(self):
-        # Iniciamos sesión con un formulario real (el del panel), como haría una persona
+        # Iniciamos sesión con un formulario real (el del panel), como haría un usuario normal, para que se cree el registro de acceso
         self.usuario.is_staff = True
         self.usuario.save()
         self.client.post(
