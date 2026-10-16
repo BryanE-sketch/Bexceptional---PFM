@@ -1,0 +1,67 @@
+/* ───────────────────────────────────────────────
+   Bexceptional · hoja de estilos principal
+   Tailwind lee las plantillas y genera static/css/main.css
+   ─────────────────────────────────────────────── */
+@import "tailwindcss" source(none);
+
+/* Solo buscamos clases en nuestras plantillas (más rápido y sin sorpresas) */
+@source "../../templates";
+
+/* Identidad de marca: estos nombres crean clases como bg-negro, text-naranja… */
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+
+  --color-negro: #121214;
+  --color-naranja: #FF8A1F;
+  --color-rojo: #EF3B2D;
+  --color-magenta: #C2185B;
+  --color-crema: #F2EDE4;
+  --color-gris: #B9B4AD;
+  --color-linea: #6B6660;
+  --color-claro: #FAF8F5;
+  --color-claro-2: #F4F1EC;
+  --color-tinta: #2B2B2E;
+}
+
+/* Piezas reutilizables de la marca */
+@layer components {
+  .bx-degradado {
+    background-image: linear-gradient(180deg, var(--color-naranja) 0%, var(--color-rojo) 55%, var(--color-magenta) 100%);
+  }
+  .bx-barra {
+    height: 4px;
+    width: 4rem;
+    border-radius: 9999px;
+    background-image: linear-gradient(90deg, var(--color-naranja), var(--color-rojo), var(--color-magenta));
+  }
+  .bx-logotipo {
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .bx-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    transition: background-color 150ms, color 150ms, border-color 150ms;
+  }
+  .btn-claro { background-color: var(--color-crema); color: var(--color-negro); }
+  .btn-claro:hover { background-color: #fff; }
+  .btn-contorno { border: 1px solid rgb(242 237 228 / 0.4); color: var(--color-crema); }
+  .btn-contorno:hover { border-color: var(--color-naranja); color: var(--color-naranja); }
+  .btn-oscuro { background-color: var(--color-negro); color: var(--color-crema); }
+  .btn-oscuro:hover { background-color: var(--color-tinta); }
+}

@@ -68,3 +68,18 @@ def fusionar_carrito_de_visitante(request, usuario):
             carrito=carrito_cliente, variante=linea.variante, defaults={"cantidad": total}
         )
     visitante.delete()
+    
+
+
+def cantidad_en_carrito(request):
+    """Número de artículos del carrito, SIN crearlo (para el icono de la cabecera)."""
+    from django.db.models import Sum
+
+    if request.user.is_authenticated:
+        lineas = LineaCarrito.objects.filter(carrito__usuario=request.user)
+    else:
+        carrito_id = request.session.get(SESION_CARRITO)
+        if not carrito_id:
+            return 0
+        lineas = LineaCarrito.objects.filter(carrito_id=carrito_id, carrito__usuario__isnull=True)
+    return lineas.aggregate(total=Sum("cantidad"))["total"] or 0

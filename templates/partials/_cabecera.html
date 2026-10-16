@@ -1,0 +1,84 @@
+{% load static %}
+<div class="bg-naranja px-4 py-2 text-center text-xs font-semibold tracking-wide text-negro">
+  Envío gratis en pedidos desde 50&nbsp;€
+</div>
+
+<header class="relative z-40 bg-negro text-crema">
+  <div class="mx-auto grid h-16 max-w-7xl grid-cols-3 items-center px-4 lg:px-8">
+
+    {# ── Izquierda: menú ── #}
+    <div class="flex items-center">
+      {# Móvil: menú desplegable sin JavaScript #}
+      <details class="group/menu lg:hidden">
+        <summary class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-full hover:text-naranja" aria-label="Abrir el menú">
+          <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </summary>
+        <nav aria-label="Menú principal" class="absolute inset-x-0 top-full border-t border-white/10 bg-negro px-4 pb-6 pt-2">
+          <ul class="flex flex-col text-base font-semibold">
+            <li><a class="block py-3 hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico=mujer">Mujeres</a></li>
+            <li><a class="block py-3 hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico=hombre">Hombres</a></li>
+            <li><a class="block py-3 hover:text-naranja" href="{% url 'catalogo:tienda' %}?categoria=accesorios">Accesorios</a></li>
+            <li><a class="block py-3 text-naranja" href="{% url 'contenido:habitos' %}">Hábitos</a></li>
+          </ul>
+        </nav>
+      </details>
+
+      {# Escritorio: menú con desplegables #}
+      <nav aria-label="Menú principal" class="hidden lg:block">
+        <ul class="flex items-center gap-7 text-sm font-semibold">
+          {% include "partials/_menu_publico.html" with publico="mujer" etiqueta="Mujeres" %}
+          {% include "partials/_menu_publico.html" with publico="hombre" etiqueta="Hombres" %}
+
+          <li class="group relative">
+            <a class="flex h-16 items-center hover:text-naranja" href="{% url 'catalogo:tienda' %}?categoria=accesorios">Accesorios</a>
+            {% if nav_accesorios and nav_accesorios.subcategorias.all %}
+              <div class="invisible absolute left-0 top-full w-64 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <ul class="space-y-2 rounded-b-xl border border-white/10 bg-negro p-6 text-sm font-medium text-gris">
+                  {% for sub in nav_accesorios.subcategorias.all %}
+                    <li><a class="hover:text-naranja" href="{% url 'catalogo:tienda' %}?categoria={{ sub.slug }}">{{ sub.nombre }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </li>
+
+          <li class="group relative">
+            <a class="flex h-16 items-center text-naranja hover:text-crema" href="{% url 'contenido:habitos' %}">Hábitos</a>
+            <div class="invisible absolute left-0 top-full w-72 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <ul class="space-y-2 rounded-b-xl border border-white/10 bg-negro p-6 text-sm font-medium text-gris">
+                <li><a class="hover:text-naranja" href="{% url 'contenido:habitos' %}">Guía de hábitos</a></li>
+                <li><a class="hover:text-naranja" href="{% url 'contenido:habitos' %}#descargables">Rastreadores descargables</a></li>
+                <li><a class="hover:text-naranja" href="{% url 'contenido:habitos' %}#articulos">Artículos con evidencia</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    {# ── Centro: logo ── #}
+    <a href="{% url 'catalogo:inicio' %}" class="flex items-center justify-center gap-3" aria-label="Bexceptional, ir a la portada">
+      <img src="{% static 'img/logo-simbolo.svg' %}" alt="" class="h-9 w-auto">
+      <span class="bx-logotipo hidden text-lg sm:inline"><span class="text-naranja">BE</span>XCEPTIONAL</span>
+    </a>
+
+    {# ── Derecha: iconos ── #}
+    <div class="flex items-center justify-end gap-1">
+      <a href="{% url 'catalogo:tienda' %}" class="flex h-11 w-11 items-center justify-center rounded-full hover:text-naranja" aria-label="Buscar">
+        <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </a>
+      <a href="{% url 'catalogo:favoritos' %}" class="hidden h-11 w-11 items-center justify-center rounded-full hover:text-naranja sm:flex" aria-label="Favoritos">
+        <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10z"/></svg>
+      </a>
+      <a href="{% url 'cuentas:perfil' %}" class="flex h-11 w-11 items-center justify-center rounded-full hover:text-naranja" aria-label="Mi cuenta">
+        <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      </a>
+      <a href="{% url 'carrito:detalle' %}" class="relative flex h-11 w-11 items-center justify-center rounded-full hover:text-naranja" aria-label="Carrito, {{ carrito_cantidad }} artículo{{ carrito_cantidad|pluralize }}">
+        <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+        {% if carrito_cantidad %}
+          <span class="absolute right-1 top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-naranja px-1 text-[11px] font-bold text-negro">{{ carrito_cantidad }}</span>
+        {% endif %}
+      </a>
+    </div>
+  </div>
+</header>

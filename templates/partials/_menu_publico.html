@@ -1,0 +1,29 @@
+{# Elemento del menú «Mujeres» u «Hombres» con su desplegable de categorías y actividades #}
+<li class="group relative">
+  <a class="flex h-16 items-center hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico={{ publico }}">{{ etiqueta }}</a>
+  <div class="invisible absolute left-0 top-full w-[34rem] opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+    <div class="grid grid-cols-2 gap-8 rounded-b-xl border border-white/10 bg-negro p-6">
+      <div>
+        <p class="bx-eyebrow mb-3 text-gris">Categorías</p>
+        <ul class="space-y-2 text-sm font-medium text-gris">
+          <li><a class="hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico={{ publico }}">Ver todo</a></li>
+          {% for categoria in nav_categorias %}
+            {% for sub in categoria.subcategorias.all %}
+              <li><a class="hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico={{ publico }}&amp;categoria={{ sub.slug }}">{{ sub.nombre }}</a></li>
+            {% empty %}
+              <li><a class="hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico={{ publico }}&amp;categoria={{ categoria.slug }}">{{ categoria.nombre }}</a></li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+      <div>
+        <p class="bx-eyebrow mb-3 text-gris">Por actividad</p>
+        <ul class="space-y-2 text-sm font-medium text-gris">
+          {% for disciplina in nav_disciplinas %}
+            <li><a class="hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico={{ publico }}&amp;disciplina={{ disciplina.slug }}">{{ disciplina.nombre }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</li>

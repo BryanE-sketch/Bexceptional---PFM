@@ -1,0 +1,13 @@
+{
+  "name": "bexceptional",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "css:build": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css --minify",
+    "css:watch": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

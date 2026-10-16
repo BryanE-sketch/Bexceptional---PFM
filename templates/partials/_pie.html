@@ -1,0 +1,37 @@
+{% load static %}
+<footer class="bg-negro text-gris">
+  <div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
+    <div class="space-y-4">
+      <a href="{% url 'catalogo:inicio' %}" class="flex items-center gap-3 text-crema" aria-label="Bexceptional, ir a la portada">
+        <img src="{% static 'img/logo-simbolo.svg' %}" alt="" class="h-9 w-auto">
+        <span class="bx-logotipo"><span class="text-naranja">BE</span>XCEPTIONAL</span>
+      </a>
+      <p class="max-w-xs text-sm leading-relaxed">Ropa deportiva y hábitos respaldados por la ciencia. Tu «yo» de hoy, mejor que el de ayer.</p>
+    </div>
+    <div>
+      <p class="bx-eyebrow mb-4 text-crema">Tienda</p>
+      <ul class="space-y-2 text-sm">
+        <li><a class="hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico=mujer">Mujeres</a></li>
+        <li><a class="hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico=hombre">Hombres</a></li>
+        <li><a class="hover:text-naranja" href="{% url 'catalogo:tienda' %}?categoria=accesorios">Accesorios</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="bx-eyebrow mb-4 text-crema">Bexceptional</p>
+      <ul class="space-y-2 text-sm">
+        <li><a class="hover:text-naranja" href="{% url 'contenido:habitos' %}">Guía de hábitos</a></li>
+        <li><a class="hover:text-naranja" href="{% url 'cuentas:perfil' %}">Mi cuenta</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="bx-eyebrow mb-4 text-crema">Aviso</p>
+      <p class="text-sm leading-relaxed">Proyecto académico del Máster en Desarrollo Full Stack. Los pagos son simulados: no se cobra ni se guardan datos de tarjeta.</p>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs sm:flex-row sm:items-center sm:justify-between lg:px-8">
+      <p class="bx-eyebrow text-linea">Rise above the ordinary</p>
+      <p>© 2026 Bexceptional.com</p>
+    </div>
+  </div>
+</footer>
