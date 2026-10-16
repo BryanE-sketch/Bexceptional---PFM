@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
@@ -28,7 +29,24 @@ class Categoria(models.Model):
         ordering = ["orden", "nombre"]
 
     def __str__(self):
-        return f"{self.padre} › {self.nombre}" if self.padre else self.nombre
+        # Solo se muestra un nivel de padre: aunque los datos tuvieran un bucle,
+        # el nombre nunca entra en una recursión infinita.
+        if self.padre_id and self.padre_id != self.pk:
+            return f"{self.padre.nombre} › {self.nombre}"
+        return self.nombre
+
+    def clean(self):
+        """Impide bucles en el árbol: una categoría no puede ser su propio padre ni su descendiente."""
+        super().clean()
+        padre = self.padre
+        visitados = set()
+        while padre is not None:
+            if padre.pk == self.pk and self.pk is not None:
+                raise ValidationError({"padre": "Una categoría no puede ser padre de sí misma ni de una categoría superior."})
+            if padre.pk in visitados:  # bucle ya existente en otras categorías
+                break
+            visitados.add(padre.pk)
+            padre = padre.padre
 
 
 class Disciplina(models.Model):
