@@ -28,7 +28,6 @@ class CategoriaTests(TestCase):
         self.assertEqual(str(self.ropa), "Camisetas › Ropa")  # sin RecursionError
 
 
-
 class FichaProductoTests(TestCase):
     def setUp(self):
         from decimal import Decimal
@@ -60,3 +59,46 @@ class FichaProductoTests(TestCase):
     def test_una_talla_agotada_aparece_deshabilitada(self):
         respuesta = self.client.get(f"{self.producto.get_absolute_url()}?color={self.blanco.pk}")
         self.assertContains(respuesta, "(agotada)")
+
+
+class CargarCatalogoDemoTests(TestCase):
+    """El comando de datos de demostración debe ser fiable: se ejecuta en cada despliegue nuevo."""
+
+    def setUp(self):
+        from io import StringIO
+        from django.core.management import call_command
+        from catalogo.models import Color
+        self.call_command, self.StringIO = call_command, StringIO
+        Categoria.objects.create(nombre="Accesorios", slug="accesorios")
+        Color.objects.create(nombre="Magenta", codigo_hex="#C2185B")
+
+    def cargar(self, *args):
+        self.call_command("cargar_catalogo_demo", *args, stdout=self.StringIO())
+
+    def test_crea_15_productos_con_tres_colores(self):
+        from catalogo.models import Producto, Variante
+        self.cargar()
+        self.assertEqual(Producto.objects.count(), 15)
+        colores = set(Variante.objects.values_list("color__nombre", flat=True))
+        self.assertEqual(colores, {"Negro", "Blanco", "Gris"})
+
+    def test_una_variante_agotada_por_categoria_y_el_resto_con_mas_de_10(self):
+        from catalogo.models import Variante
+        self.cargar()
+        for slug in ["camisetas", "rinoneras", "calcetines", "gorras", "agarraderas"]:
+            variantes = Variante.objects.filter(producto__categoria__slug=slug)
+            self.assertEqual(variantes.filter(stock=0).count(), 1, slug)
+            self.assertFalse(variantes.filter(stock__gt=0, stock__lte=10).exists(), slug)
+
+    def test_se_puede_ejecutar_dos_veces_sin_duplicar(self):
+        from catalogo.models import ImagenProducto, Variante
+        self.cargar()
+        antes = (Variante.objects.count(), ImagenProducto.objects.count())
+        self.cargar()
+        self.assertEqual((Variante.objects.count(), ImagenProducto.objects.count()), antes)
+        self.assertEqual(antes[1], 45)
+
+    def test_retirar_color_borra_el_magenta(self):
+        from catalogo.models import Color
+        self.cargar("--retirar-color", "Magenta")
+        self.assertFalse(Color.objects.filter(nombre="Magenta").exists())
