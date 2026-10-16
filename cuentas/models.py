@@ -1,5 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.functions import Lower
 
@@ -63,3 +64,72 @@ class Usuario(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+
+
+class Direccion(models.Model):
+    """Direcciones de envío guardadas por el cliente para no reescribirlas en cada compra."""
+
+    usuario = models.ForeignKey(
+        Usuario, verbose_name="usuario", on_delete=models.CASCADE, related_name="direcciones"
+    )
+    nombre_destinatario = models.CharField("destinatario", max_length=120)
+    direccion = models.CharField("dirección", max_length=200)
+    ciudad = models.CharField("ciudad", max_length=80)
+    codigo_postal = models.CharField(
+        "código postal",
+        max_length=5,
+        validators=[RegexValidator(r"^\d{5}$", "El código postal debe tener 5 cifras.")],
+    )
+    provincia = models.CharField("provincia", max_length=80)
+    telefono = models.CharField(
+        "teléfono",
+        max_length=20,
+        validators=[RegexValidator(r"^\+?[\d\s]{9,15}$", "Introduce un teléfono válido.")],
+    )
+    predeterminada = models.BooleanField("predeterminada", default=False)
+
+    class Meta:
+        verbose_name = "dirección"
+        verbose_name_plural = "direcciones"
+        constraints = [
+            # Cada usuario puede tener como mucho UNA dirección predeterminada
+            models.UniqueConstraint(
+                fields=["usuario"],
+                condition=models.Q(predeterminada=True),
+                name="una_direccion_predeterminada",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.nombre_destinatario}, {self.direccion} ({self.ciudad})"
+
+    def datos_envio(self):
+        """Devuelve los datos en el formato que espera pedidos.services.crear_pedido."""
+        return {
+            "nombre_destinatario": self.nombre_destinatario,
+            "direccion": self.direccion,
+            "ciudad": self.ciudad,
+            "codigo_postal": self.codigo_postal,
+            "provincia": self.provincia,
+            "telefono": self.telefono,
+        }
+
+
+class RegistroAcceso(models.Model):
+    """Historial de inicios de sesión. Se borra automáticamente a los 90 días (RGPD)."""
+
+    usuario = models.ForeignKey(
+        Usuario, verbose_name="usuario", on_delete=models.CASCADE, related_name="accesos"
+    )
+    fecha = models.DateTimeField("fecha", auto_now_add=True, db_index=True)
+    ip = models.GenericIPAddressField("dirección IP", null=True, blank=True)
+    dispositivo = models.CharField("dispositivo / navegador", max_length=255, blank=True)
+
+    class Meta:
+        verbose_name = "inicio de sesión"
+        verbose_name_plural = "historial de inicios de sesión"
+        ordering = ["-fecha"]
+
+    def __str__(self):
+        return f"{self.usuario} · {self.fecha:%d/%m/%Y %H:%M}"

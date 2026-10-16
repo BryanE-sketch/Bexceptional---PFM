@@ -2,11 +2,28 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import UsuarioChangeForm, UsuarioCreationForm
-from .models import Usuario
+from .models import Direccion, RegistroAcceso, Usuario
+
+
+class DireccionInline(admin.StackedInline):
+    model = Direccion
+    extra = 0
+
+
+class RegistroAccesoInline(admin.TabularInline):
+    """Últimos inicios de sesión del cliente, solo lectura."""
+
+    model = RegistroAcceso
+    extra = 0
+    can_delete = False
+    readonly_fields = ("fecha", "ip", "dispositivo")
+    fields = readonly_fields
+    max_num = 0  # no permite añadir registros a mano
 
 
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
+    inlines = [DireccionInline, RegistroAccesoInline]
     add_form = UsuarioCreationForm
     form = UsuarioChangeForm
     model = Usuario
@@ -33,3 +50,18 @@ class UsuarioAdmin(UserAdmin):
             "fields": ("email", "usable_password", "password1", "password2"),
         }),
     )
+
+
+@admin.register(RegistroAcceso)
+class RegistroAccesoAdmin(admin.ModelAdmin):
+    list_display = ("usuario", "fecha", "ip", "dispositivo")
+    list_filter = ("fecha",)
+    search_fields = ("usuario__email", "ip")
+    date_hierarchy = "fecha"
+    readonly_fields = ("usuario", "fecha", "ip", "dispositivo")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
