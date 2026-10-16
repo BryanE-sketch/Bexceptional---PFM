@@ -36,7 +36,7 @@
     {% for disciplina in disciplinas %}
       <li>
         <a href="{% url 'catalogo:tienda' %}?disciplina={{ disciplina.slug }}" class="group block">
-          <div class="aspect-[3/4] overflow-hidden rounded-xl bg-negro">
+          <div class="aspect-3/4 overflow-hidden rounded-xl bg-negro">
             {% if disciplina.imagen %}
               <img src="{{ disciplina.imagen.url }}" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
             {% else %}
@@ -62,7 +62,7 @@
       {% for producto in novedades %}
         <li>
           <a href="{% url 'catalogo:tienda' %}" class="group block">
-            <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-claro">
+            <div class="relative aspect-3/4 overflow-hidden rounded-xl bg-claro">
               {% with imagen=producto.imagenes.all.0 %}
                 {% if imagen %}
                   <img src="{{ imagen.imagen.url }}" alt="{{ imagen.texto_alternativo }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">

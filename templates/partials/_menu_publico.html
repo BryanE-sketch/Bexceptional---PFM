@@ -1,7 +1,7 @@
 {# Elemento del menú «Mujeres» u «Hombres» con su desplegable de categorías y actividades #}
 <li class="group relative">
   <a class="flex h-16 items-center hover:text-naranja" href="{% url 'catalogo:tienda' %}?publico={{ publico }}">{{ etiqueta }}</a>
-  <div class="invisible absolute left-0 top-full w-[34rem] opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+  <div class="invisible absolute left-0 top-full w-136 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
     <div class="grid grid-cols-2 gap-8 rounded-b-xl border border-white/10 bg-negro p-6">
       <div>
         <p class="bx-eyebrow mb-3 text-gris">Categorías</p>
