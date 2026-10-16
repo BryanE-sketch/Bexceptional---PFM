@@ -26,3 +26,37 @@ class CategoriaTests(TestCase):
         Categoria.objects.filter(pk=self.ropa.pk).update(padre=self.camisetas)
         self.ropa.refresh_from_db()
         self.assertEqual(str(self.ropa), "Camisetas › Ropa")  # sin RecursionError
+
+
+
+class FichaProductoTests(TestCase):
+    def setUp(self):
+        from decimal import Decimal
+
+        from catalogo.models import Color, Producto, Talla, Variante
+
+        categoria = Categoria.objects.create(nombre="Camisetas", slug="camisetas")
+        self.producto = Producto.objects.create(
+            nombre="Camiseta Areté", slug="camiseta-arete", descripcion="Tejido técnico.",
+            precio=Decimal("29.90"), categoria=categoria,
+        )
+        negro = Color.objects.create(nombre="Negro", codigo_hex="#121214")
+        self.blanco = Color.objects.create(nombre="Blanco", codigo_hex="#F2EDE4")
+        Variante.objects.create(producto=self.producto, talla=Talla.objects.create(nombre="M", orden=3),
+                                color=negro, sku="N-M", stock=5)
+        Variante.objects.create(producto=self.producto, talla=Talla.objects.create(nombre="L", orden=4),
+                                color=self.blanco, sku="B-L", stock=0)
+
+    def test_la_ficha_muestra_el_producto(self):
+        respuesta = self.client.get(self.producto.get_absolute_url())
+        self.assertContains(respuesta, "Camiseta Areté")
+        self.assertContains(respuesta, "29,90")
+
+    def test_un_producto_desactivado_devuelve_404(self):
+        self.producto.activo = False
+        self.producto.save()
+        self.assertEqual(self.client.get(self.producto.get_absolute_url()).status_code, 404)
+
+    def test_una_talla_agotada_aparece_deshabilitada(self):
+        respuesta = self.client.get(f"{self.producto.get_absolute_url()}?color={self.blanco.pk}")
+        self.assertContains(respuesta, "(agotada)")

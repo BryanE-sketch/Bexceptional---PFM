@@ -1,0 +1,11 @@
+{# Fragmento que devuelve la vista «anadir» cuando la petición llega desde HTMX #}
+{% if ok %}
+  <p class="flex flex-wrap items-center gap-x-2 text-sm font-semibold text-negro">
+    <span aria-hidden="true">✓</span> {{ mensaje }}
+    <a href="{% url 'carrito:detalle' %}" class="underline underline-offset-4 hover:text-magenta">Ver carrito</a>
+  </p>
+{% else %}
+  <p class="text-sm font-semibold text-magenta">{{ mensaje }}</p>
+{% endif %}
+
+{% include "carrito/_contador.html" with oob=True %}

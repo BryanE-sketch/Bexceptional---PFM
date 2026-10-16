@@ -1,0 +1,3 @@
+{# Burbuja con el número de artículos. Con oob=True, HTMX la sustituye en la cabecera desde cualquier respuesta. #}
+<span id="contador-carrito"{% if oob %} hx-swap-oob="true"{% endif %}
+      class="absolute right-1 top-1 {% if carrito_cantidad %}flex{% else %}hidden{% endif %} h-5 min-w-5 items-center justify-center rounded-full bg-naranja px-1 text-[11px] font-bold text-negro">{{ carrito_cantidad }}</span>

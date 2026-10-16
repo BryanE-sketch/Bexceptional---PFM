@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}{{ producto.nombre }} · Bexceptional{% endblock %}
+{% block descripcion %}{{ producto.descripcion|truncatechars:150 }}{% endblock %}
+
+{% block contenido %}
+<div class="mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-12">
+
+  {# ── Migas de pan ── #}
+  <nav aria-label="Migas de pan" class="mb-6 text-sm text-linea">
+    <ol class="flex flex-wrap items-center gap-2">
+      <li><a href="{% url 'catalogo:inicio' %}" class="hover:text-negro">Inicio</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="{% url 'catalogo:tienda' %}?categoria={{ producto.categoria.slug }}" class="hover:text-negro">{{ producto.categoria.nombre }}</a></li>
+      <li aria-hidden="true">/</li>
+      <li aria-current="page" class="font-semibold text-negro">{{ producto.nombre }}</li>
+    </ol>
+  </nav>
+
+  <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+
+    {# ── Imágenes ── #}
+    <div class="grid gap-3 sm:grid-cols-2">
+      {% for imagen in imagenes %}
+        <div class="aspect-3/4 overflow-hidden rounded-xl bg-claro-2 {% if forloop.first %}sm:col-span-2{% endif %}">
+          <img src="{{ imagen.imagen.url }}" alt="{{ imagen.texto_alternativo }}" class="h-full w-full object-cover">
+        </div>
+      {% empty %}
+        <div class="flex aspect-3/4 items-center justify-center rounded-xl bg-claro-2 sm:col-span-2">
+          <img src="{% static 'img/logo-simbolo.svg' %}" alt="" class="h-1/3 w-auto opacity-20">
+        </div>
+      {% endfor %}
+    </div>
+
+    {# ── Información y compra ── #}
+    <div class="lg:sticky lg:top-6 lg:self-start">
+      <p class="bx-eyebrow text-linea">{{ producto.get_publico_display }} · {{ producto.categoria.nombre }}</p>
+      <h1 class="mt-3 text-3xl font-extrabold leading-tight text-negro">{{ producto.nombre }}</h1>
+      <p class="mt-3 text-2xl font-bold text-negro">{{ producto.precio }}&nbsp;€</p>
+
+      {% if valoraciones.total %}
+        <p class="mt-2 text-sm text-linea">
+          <span class="font-bold text-negro">{{ valoraciones.media }} / 5</span>
+          · {{ valoraciones.total }} reseña{{ valoraciones.total|pluralize }} con compra verificada
+        </p>
+      {% endif %}
+
+      {# Color: cada color es un enlace (?color=id); funciona incluso sin JavaScript #}
+      {% if colores %}
+        <div class="mt-8">
+          <p class="text-sm font-semibold text-negro">Color: <span class="font-normal">{{ color.nombre }}</span></p>
+          <ul class="mt-3 flex flex-wrap gap-3">
+            {% for c in colores %}
+              <li>
+                <a href="?color={{ c.pk }}"
+                   class="block h-10 w-10 rounded-full border border-black/10 ring-offset-2 ring-offset-claro {% if c == color %}ring-2 ring-negro{% else %}hover:ring-2 hover:ring-linea{% endif %}"
+                   style="background-color: {{ c.codigo_hex }}"
+                   aria-label="Color {{ c.nombre }}"{% if c == color %} aria-current="true"{% endif %}></a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {# Formulario: funciona sin JavaScript y, con HTMX, añade sin recargar la página #}
+      <form method="post" action="{% url 'carrito:anadir' %}"
+            hx-post="{% url 'carrito:anadir' %}" hx-target="#mensaje-carrito" hx-disabled-elt="find button"
+            class="mt-8">
+        {% csrf_token %}
+
+        <fieldset>
+          <legend class="text-sm font-semibold text-negro">Talla</legend>
+          {% if tallas %}
+            <div class="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-5">
+              {% for variante in tallas %}
+                <label class="relative">
+                  <input type="radio" name="variante" value="{{ variante.pk }}" class="peer sr-only" required
+                         {% if not variante.stock %}disabled{% endif %}>
+                  <span class="flex h-12 cursor-pointer items-center justify-center rounded-lg border border-black/15 text-sm font-semibold text-negro transition
+                               hover:border-negro
+                               peer-checked:border-negro peer-checked:bg-negro peer-checked:text-crema
+                               peer-focus-visible:ring-2 peer-focus-visible:ring-naranja peer-focus-visible:ring-offset-2
+                               peer-disabled:cursor-not-allowed peer-disabled:border-black/5 peer-disabled:text-linea/60 peer-disabled:line-through">
+                    {{ variante.talla.nombre }}
+                  </span>
+                  {% if not variante.stock %}<span class="sr-only"> (agotada)</span>{% endif %}
+                </label>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="mt-3 text-sm text-linea">Este producto no tiene tallas disponibles en este momento.</p>
+          {% endif %}
+        </fieldset>
+
+        <div class="mt-6 flex items-end gap-3">
+          <div>
+            <label for="id_cantidad" class="text-sm font-semibold text-negro">Cantidad</label>
+            <input id="id_cantidad" type="number" name="cantidad" value="1" min="1" max="10"
+                   class="mt-2 block h-12 w-20 rounded-lg border border-black/15 bg-white px-3 text-center font-semibold text-negro focus:border-negro focus:outline-none">
+          </div>
+          <button type="submit" class="btn btn-oscuro h-12 flex-1 disabled:opacity-60" {% if not tallas %}disabled{% endif %}>
+            Añadir al carrito
+          </button>
+        </div>
+
+        {# Aquí aparece la respuesta de HTMX; aria-live hace que el lector de pantalla la anuncie #}
+        <div id="mensaje-carrito" class="mt-4 min-h-6" aria-live="polite"></div>
+      </form>
+
+      <div class="mt-8 space-y-4 border-t border-black/10 pt-8 text-sm leading-relaxed text-tinta">
+        {{ producto.descripcion|linebreaks }}
+        {% if producto.disciplinas.all %}
+          <ul class="flex flex-wrap gap-2 pt-2">
+            {% for disciplina in producto.disciplinas.all %}
+              <li><a href="{% url 'catalogo:tienda' %}?disciplina={{ disciplina.slug }}" class="rounded-full bg-claro-2 px-3 py-1 text-xs font-semibold text-negro hover:bg-negro hover:text-crema">{{ disciplina.nombre }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        <p class="text-linea">Envío gratis en pedidos desde 50&nbsp;€. Pago simulado: proyecto académico.</p>
+      </div>
+    </div>
+  </div>
+
+  {# ── Reseñas con compra verificada ── #}
+  <section class="mt-16 border-t border-black/10 pt-12" aria-labelledby="titulo-resenas">
+    <h2 id="titulo-resenas" class="text-2xl font-extrabold text-negro">Reseñas</h2>
+    {% if resenas %}
+      <ul class="mt-6 grid gap-4 md:grid-cols-2">
+        {% for resena in resenas %}
+          <li class="rounded-2xl bg-claro-2 p-6">
+            <p class="font-bold text-negro">{{ resena.puntuacion }} / 5 · {{ resena.titulo }}</p>
+            <p class="mt-2 text-sm leading-relaxed">{{ resena.texto }}</p>
+            <p class="mt-4 text-xs text-linea">
+              {{ resena.usuario.first_name|default:"Cliente" }} · Compra verificada · {{ resena.creado|date:"j \d\e F \d\e Y" }}
+              {% if resena.es_demo %}· <span class="font-semibold">Dato de demostración</span>{% endif %}
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="mt-4 text-sm text-linea">Todavía no hay reseñas. Solo pueden opinar los clientes que han recibido este producto.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

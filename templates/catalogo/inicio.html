@@ -61,7 +61,7 @@
     <ul class="grid grid-cols-2 gap-x-3 gap-y-8 lg:grid-cols-4">
       {% for producto in novedades %}
         <li>
-          <a href="{% url 'catalogo:tienda' %}" class="group block">
+          <a href="{{ producto.get_absolute_url }}" class="group block">
             <div class="relative aspect-3/4 overflow-hidden rounded-xl bg-claro">
               {% with imagen=producto.imagenes.all.0 %}
                 {% if imagen %}

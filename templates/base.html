@@ -13,13 +13,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
 </head>
-<body class="flex min-h-screen flex-col bg-claro font-sans text-tinta antialiased">
+<body class="flex min-h-screen flex-col bg-claro font-sans text-tinta antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-crema focus:px-4 focus:py-2 focus:text-negro">Saltar al contenido</a>
 
   {% include "partials/_cabecera.html" %}
 
-  <main id="contenido" class="flex-1">
+ <main id="contenido" class="flex-1">
+    {% if messages %}
+      <div class="mx-auto max-w-7xl px-4 pt-6 lg:px-8" role="status">
+        {% for message in messages %}
+          <p class="mb-2 rounded-xl px-4 py-3 text-sm font-semibold {% if message.tags == 'error' %}bg-magenta/10 text-magenta{% else %}bg-claro-2 text-negro{% endif %}">{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
     {% block contenido %}{% endblock %}
   </main>
 

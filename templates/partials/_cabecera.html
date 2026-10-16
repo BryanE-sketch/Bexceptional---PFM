@@ -75,9 +75,7 @@
       </a>
       <a href="{% url 'carrito:detalle' %}" class="relative flex h-11 w-11 items-center justify-center rounded-full hover:text-naranja" aria-label="Carrito, {{ carrito_cantidad }} artículo{{ carrito_cantidad|pluralize }}">
         <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-        {% if carrito_cantidad %}
-          <span class="absolute right-1 top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-naranja px-1 text-[11px] font-bold text-negro">{{ carrito_cantidad }}</span>
-        {% endif %}
+      {% include "carrito/_contador.html" %}
       </a>
     </div>
   </div>
