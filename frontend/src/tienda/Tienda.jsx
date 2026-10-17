@@ -156,7 +156,7 @@ export default function Tienda({ urlProductos, urlFiltros }) {
   );
 }
 
-/** Caja de búsqueda: espera unos ms después de la última tecla antes de buscar (debounce). */
+/** Caja de búsqueda: espera 350 ms después de la última tecla antes de buscar (debounce). */
 function Buscador({ valorInicial, alBuscar }) {
   const [texto, setTexto] = useState(valorInicial);
 
@@ -177,7 +177,7 @@ function Buscador({ valorInicial, alBuscar }) {
         type="search"
         value={texto}
         onChange={(e) => setTexto(e.target.value)}
-        placeholder="Buscar camisetas, gorras…"
+        placeholder="Buscar camisetas, riñoneras…"
         autoComplete="off"
         className="h-12 w-full rounded-full border border-black/15 bg-white px-5 text-sm text-negro placeholder:text-linea focus:border-negro focus:outline-none"
       />
@@ -199,7 +199,7 @@ function Esqueleto() {
   );
 }
 
-/** Título según los filtros: "Mujeres", "Accesorios", "Resultados de «gorra»"... */
+/** Título según los filtros: "Mujeres", "Accesorios", "Resultados de «riñonera»"... */
 function tituloDePagina(parametros, opciones) {
   const q = parametros.get("q");
   if (q) return `Resultados de «${q}»`;

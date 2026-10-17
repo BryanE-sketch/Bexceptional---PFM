@@ -78,17 +78,17 @@ class CargarCatalogoDemoTests(TestCase):
     def cargar(self, *args):
         self.call_command("cargar_catalogo_demo", *args, stdout=self.StringIO())
 
-    def test_crea_15_productos_con_tres_colores(self):
+    def test_crea_6_productos_en_negro_y_blanco(self):
         from catalogo.models import Producto, Variante
         self.cargar()
-        self.assertEqual(Producto.objects.count(), 15)
+        self.assertEqual(Producto.objects.count(), 6)
         colores = set(Variante.objects.values_list("color__nombre", flat=True))
-        self.assertEqual(colores, {"Negro", "Blanco", "Gris"})
+        self.assertEqual(colores, {"Negro", "Blanco"})
 
     def test_una_variante_agotada_por_categoria_y_el_resto_con_mas_de_10(self):
         from catalogo.models import Variante
         self.cargar()
-        for slug in ["camisetas", "rinoneras", "calcetines", "gorras", "agarraderas"]:
+        for slug in ["camisetas", "rinoneras"]:
             variantes = Variante.objects.filter(producto__categoria__slug=slug)
             self.assertEqual(variantes.filter(stock=0).count(), 1, slug)
             self.assertFalse(variantes.filter(stock__gt=0, stock__lte=10).exists(), slug)
@@ -99,9 +99,35 @@ class CargarCatalogoDemoTests(TestCase):
         antes = (Variante.objects.count(), ImagenProducto.objects.count())
         self.cargar()
         self.assertEqual((Variante.objects.count(), ImagenProducto.objects.count()), antes)
-        self.assertEqual(antes[1], 45)
+        self.assertGreaterEqual(antes[1], 12)  # al menos una foto por producto y color
 
-    def test_retirar_color_borra_el_magenta(self):
+    def test_retirar_color_por_nombre_o_codigo(self):
         from catalogo.models import Color
-        self.cargar("--retirar-color", "Magenta")
-        self.assertFalse(Color.objects.filter(nombre="Magenta").exists())
+        Color.objects.create(nombre="Gris oscuro", codigo_hex="#A9A9A9")
+        self.cargar("--retirar-color", "Magenta", "--retirar-color", "#a9a9a9")
+        self.assertFalse(Color.objects.filter(nombre__in=["Magenta", "Gris oscuro"]).exists())
+
+    def test_retirar_incompletos_borra_productos_y_desactiva_categorias(self):
+        from catalogo.models import Producto
+        accesorios = Categoria.objects.get(slug="accesorios")
+        gorras = Categoria.objects.create(nombre="Gorras", slug="gorras", padre=accesorios)
+        Producto.objects.create(nombre="Gorra Baseball curva", slug="gorra-baseball-curva",
+                                precio="27.95", categoria=gorras)
+        otro = Producto.objects.create(nombre="Gorra propia", slug="gorra-propia", precio="10", categoria=gorras)
+        self.cargar("--retirar-incompletos")
+        self.assertFalse(Producto.objects.filter(slug="gorra-baseball-curva").exists())
+        # Un producto que no es de la demo no se toca, y su categoría sigue activa
+        self.assertTrue(Producto.objects.filter(pk=otro.pk).exists())
+        gorras.refresh_from_db()
+        self.assertTrue(gorras.activa)
+        otro.delete()
+        self.cargar("--retirar-incompletos")
+        gorras.refresh_from_db()
+        self.assertFalse(gorras.activa)
+
+    def test_reemplazar_imagenes_no_duplica(self):
+        from catalogo.models import ImagenProducto
+        self.cargar()
+        antes = ImagenProducto.objects.count()
+        self.cargar("--reemplazar-imagenes")
+        self.assertEqual(ImagenProducto.objects.count(), antes)

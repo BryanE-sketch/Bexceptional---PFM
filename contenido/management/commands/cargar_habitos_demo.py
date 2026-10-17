@@ -59,8 +59,7 @@ DISCIPLINAS = {
         "orden": 1,
         "descripcion": "Entrenar la fuerza construye músculo, protege tus articulaciones y te hace más "
                        "resistente a las lesiones. La clave no es entrenar al límite, sino progresar poco a poco.",
-        "productos": ["camiseta-sin-mangas-training", "straps-algodon", "straps-acolchados",
-                      "ganchos-levantamiento", "mini-rinonera-gym", "calcetines-media-cana-training"],
+        "productos": ["camiseta-sin-mangas-training", "mini-rinonera-gym"],
         "consejos": [
             ("Fuerza, al menos 2 días por semana",
              "La OMS recomienda a los adultos trabajar los grandes grupos musculares dos o más días a la "
@@ -101,8 +100,7 @@ DISCIPLINAS = {
         "orden": 2,
         "descripcion": "Correr mejora tu corazón y tu cabeza. Para disfrutarlo durante años, la mayoría "
                        "de los kilómetros deben ser suaves y el volumen debe crecer con paciencia.",
-        "productos": ["camiseta-arete", "rinonera-running", "calcetines-tobilleros-running",
-                      "gorra-running-ligera", "visera-training"],
+        "productos": ["camiseta-arete", "rinonera-running"],
         "consejos": [
             ("La mayoría de tus kilómetros, suaves",
              "Los corredores de resistencia de élite hacen en torno al 80 % de su entrenamiento a baja "
@@ -143,7 +141,7 @@ DISCIPLINAS = {
         "orden": 3,
         "descripcion": "Comer bien no es seguir una dieta perfecta: es repetir cada día unas pocas "
                        "decisiones sencillas que sostienen tu energía, tu recuperación y tu salud.",
-        "productos": ["rinonera-cruzada-urban", "calcetines-pack-crew"],
+        "productos": ["rinonera-cruzada-urban"],
         "consejos": [
             ("400 g de fruta y verdura al día",
              "La OMS recomienda al menos 400 gramos diarios de frutas y verduras, y limitar los azúcares "
@@ -185,7 +183,7 @@ DISCIPLINAS = {
         "orden": 4,
         "descripcion": "Descansar también es entrenar. El sueño y la recuperación son el momento en el "
                        "que tu cuerpo convierte el esfuerzo en progreso.",
-        "productos": ["camiseta-fenix-oversize", "gorra-baseball-curva"],
+        "productos": ["camiseta-fenix-oversize"],
         "consejos": [
             ("Duerme 7 horas o más",
              "El consenso de la Academia Americana de Medicina del Sueño recomienda a los adultos dormir "
