@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Hábitos · Bexceptional{% endblock %}
+{% block descripcion %}Consejos basados en la evidencia para entrenar fuerza, correr, comer mejor y descansar, y rastreadores de hábitos descargables.{% endblock %}
+
+{% block contenido %}
+{# ── Cabecera ── #}
+<section class="bg-negro text-crema">
+  <div class="mx-auto max-w-7xl px-4 py-16 lg:px-8 lg:py-24">
+    <p class="bx-eyebrow text-naranja">Guía de hábitos</p>
+    <h1 class="mt-4 max-w-3xl text-4xl font-extrabold leading-tight lg:text-6xl">Pequeños hábitos.<br>Resultados extraordinarios.</h1>
+    <div class="bx-barra mt-6"></div>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-gris">
+      Lo esencial de cada disciplina, resumido a partir de la evidencia científica y con el enlace a cada fuente
+      para que puedas comprobarlo tú.
+    </p>
+  </div>
+</section>
+
+{# ── Disciplinas ── #}
+<section class="mx-auto max-w-7xl px-4 py-16 lg:px-8" aria-labelledby="titulo-disciplinas">
+  <h2 id="titulo-disciplinas" class="text-3xl font-extrabold text-negro">Elige tu disciplina</h2>
+  <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {% for d in disciplinas %}
+      <li>
+        <a href="{% url 'contenido:disciplina' d.slug %}" class="group flex h-full flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-xl">
+          <div class="bx-degradado relative flex aspect-4/3 items-center justify-center">
+            {% if d.imagen %}
+              <img src="{{ d.imagen.url }}" alt="" class="absolute inset-0 h-full w-full object-cover">
+            {% else %}
+              <img src="{% static 'img/fenix-oscuro.svg' %}" alt="" class="h-1/2 w-auto transition duration-500 group-hover:scale-110">
+            {% endif %}
+            <span class="absolute left-4 top-4 text-sm font-extrabold text-negro">0{{ forloop.counter }}</span>
+          </div>
+          <div class="flex flex-1 flex-col p-6">
+            <h3 class="text-xl font-extrabold text-negro">{{ d.nombre }}</h3>
+            <p class="mt-2 flex-1 text-sm leading-relaxed text-linea">{{ d.descripcion|truncatechars:120 }}</p>
+            <p class="mt-4 text-sm font-bold text-negro group-hover:text-rojo">Ver consejos →</p>
+          </div>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+
+{# ── Descargables ── #}
+{% if recursos %}
+<section id="descargables" class="scroll-mt-6 bg-claro-2" aria-labelledby="titulo-descargables">
+  <div class="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+    <h2 id="titulo-descargables" class="text-3xl font-extrabold text-negro">Rastreadores descargables</h2>
+    <p class="mt-2 text-linea">PDF editables: rellénalos en el ordenador o imprímelos.</p>
+    <ul class="mt-8 grid gap-6 md:grid-cols-2">
+      {% for recurso in recursos %}
+        <li class="flex gap-6 rounded-2xl bg-white p-6 ring-1 ring-black/5">
+          {% if recurso.imagen_previa %}
+            <img src="{{ recurso.imagen_previa.url }}" alt="Vista previa de {{ recurso.titulo }}" class="w-28 shrink-0 rounded-lg shadow-md sm:w-36">
+          {% endif %}
+          <div class="flex flex-col">
+            <p class="bx-eyebrow text-rojo">{{ recurso.get_tipo_display }}</p>
+            <h3 class="mt-2 text-xl font-extrabold text-negro">{{ recurso.titulo }}</h3>
+            <p class="mt-2 flex-1 text-sm leading-relaxed text-linea">{{ recurso.descripcion }}</p>
+            <form method="post" action="{% url 'contenido:descargar' recurso.slug %}" class="mt-4">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-oscuro">Descargar PDF</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{# ── Artículos ── #}
+{% if articulos %}
+<section id="articulos" class="mx-auto max-w-7xl scroll-mt-6 px-4 py-16 lg:px-8" aria-labelledby="titulo-articulos">
+  <h2 id="titulo-articulos" class="text-3xl font-extrabold text-negro">Artículos con evidencia</h2>
+  <ul class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {% for a in articulos %}
+      <li>{% include "contenido/_tarjeta_articulo.html" with articulo=a %}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<p class="mx-auto max-w-7xl px-4 pb-16 text-xs text-linea lg:px-8">
+  Contenido divulgativo elaborado por Bexceptional a partir de las fuentes citadas. No sustituye el consejo de un profesional sanitario.
+</p>
+{% endblock %}

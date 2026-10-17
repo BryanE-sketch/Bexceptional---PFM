@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ disciplina.nombre }} · Hábitos · Bexceptional{% endblock %}
+{% block descripcion %}{{ disciplina.descripcion|truncatechars:150 }}{% endblock %}
+
+{% block contenido %}
+<section class="bg-negro text-crema">
+  <div class="mx-auto max-w-7xl px-4 py-14 lg:px-8 lg:py-20">
+    <nav aria-label="Migas de pan" class="text-sm text-gris">
+      <a href="{% url 'contenido:habitos' %}" class="hover:text-naranja">Hábitos</a> <span aria-hidden="true">/</span>
+      <span aria-current="page" class="text-crema">{{ disciplina.nombre }}</span>
+    </nav>
+    <h1 class="mt-6 text-4xl font-extrabold lg:text-6xl">{{ disciplina.nombre }}</h1>
+    <div class="bx-barra mt-6"></div>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed text-gris">{{ disciplina.descripcion }}</p>
+  </div>
+</section>
+
+{# ── Consejos ── #}
+<section class="mx-auto max-w-7xl px-4 py-16 lg:px-8" aria-labelledby="titulo-consejos">
+  <h2 id="titulo-consejos" class="text-3xl font-extrabold text-negro">Lo esencial</h2>
+  <ol class="mt-8 grid gap-6 md:grid-cols-3">
+    {% for consejo in consejos %}
+      <li class="flex flex-col rounded-2xl bg-white p-6 ring-1 ring-black/5">
+        <span class="text-4xl font-extrabold text-naranja">0{{ forloop.counter }}</span>
+        <h3 class="mt-4 text-lg font-extrabold text-negro">{{ consejo.titulo }}</h3>
+        <p class="mt-2 flex-1 text-sm leading-relaxed text-tinta">{{ consejo.texto }}</p>
+        <p class="mt-5 text-xs text-linea">Fuente: {{ consejo.fuente_nombre }}</p>
+        <a href="{{ consejo.fuente_url }}" target="_blank" rel="noopener noreferrer"
+           class="mt-1 text-sm font-semibold text-negro underline underline-offset-4 hover:text-rojo">
+          Ver más<span class="sr-only"> sobre {{ consejo.titulo }} (abre la fuente original en otra pestaña)</span> ↗
+        </a>
+      </li>
+    {% endfor %}
+  </ol>
+</section>
+
+{# ── Artículo ── #}
+{% for articulo in articulos %}
+  <section class="mx-auto max-w-7xl px-4 pb-16 lg:px-8">
+    <a href="{% url 'contenido:articulo' articulo.slug %}" class="group grid gap-6 overflow-hidden rounded-2xl bg-claro-2 p-8 md:grid-cols-[1fr_auto] md:items-center">
+      <div>
+        <p class="bx-eyebrow text-rojo">Artículo · {{ articulo.fuentes.all|length }} fuente{{ articulo.fuentes.all|length|pluralize }}</p>
+        <h2 class="mt-3 text-2xl font-extrabold text-negro group-hover:underline">{{ articulo.titulo }}</h2>
+        <p class="mt-2 text-linea">{{ articulo.resumen }}</p>
+      </div>
+      <span class="btn btn-oscuro">Leer el artículo completo</span>
+    </a>
+  </section>
+{% endfor %}
+
+{# ── Productos para practicarla ── #}
+{% if productos %}
+<section class="bg-claro-2" aria-labelledby="titulo-equipate">
+  <div class="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+    <div class="flex items-end justify-between gap-4">
+      <h2 id="titulo-equipate" class="text-3xl font-extrabold text-negro">Equípate para {{ disciplina.nombre|lower }}</h2>
+      <a href="{% url 'catalogo:tienda' %}?disciplina={{ disciplina.slug }}" class="whitespace-nowrap text-sm font-semibold underline underline-offset-4 hover:text-rojo">Ver todo</a>
+    </div>
+    <ul class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {% for producto in productos %}
+        <li>
+          <a href="{{ producto.get_absolute_url }}" class="group block">
+            <div class="aspect-3/4 overflow-hidden rounded-xl bg-white">
+              {% with imagen=producto.imagenes.all|first %}
+                {% if imagen %}<img src="{{ imagen.imagen.url }}" alt="{{ imagen.texto_alternativo }}" loading="lazy" class="h-full w-full object-cover transition group-hover:scale-105">{% endif %}
+              {% endwith %}
+            </div>
+            <p class="mt-3 text-sm font-bold text-negro">{{ producto.nombre }}</p>
+            <p class="text-sm text-linea">{{ producto.precio }}&nbsp;€</p>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{# ── Otras disciplinas ── #}
+{% if otras %}
+<nav class="mx-auto max-w-7xl px-4 py-12 lg:px-8" aria-label="Otras disciplinas">
+  <p class="bx-eyebrow text-linea">Sigue explorando</p>
+  <ul class="mt-4 flex flex-wrap gap-3">
+    {% for d in otras %}
+      <li><a href="{% url 'contenido:disciplina' d.slug %}" class="btn border border-black/15 text-negro hover:border-negro">{{ d.nombre }}</a></li>
+    {% endfor %}
+    <li><a href="{% url 'contenido:habitos' %}#descargables" class="btn btn-oscuro">Rastreador de hábitos</a></li>
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

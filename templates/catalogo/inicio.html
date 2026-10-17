@@ -25,17 +25,18 @@
   </div>
 </section>
 
-{# ── 2. Comprar por actividad ── #}
+{# ── 2. Disciplinas → apartado de Hábitos ── #}
 {% if disciplinas %}
 <section class="mx-auto max-w-7xl px-4 py-16 lg:px-8" aria-labelledby="titulo-actividades">
   <div class="mb-8 flex items-end justify-between gap-4">
-    <h2 id="titulo-actividades" class="text-3xl font-extrabold text-negro">Compra por actividad</h2>
-    <a href="{% url 'catalogo:tienda' %}" class="whitespace-nowrap text-sm font-semibold underline underline-offset-4 hover:text-rojo">Ver todo</a>
+    <h2 id="titulo-actividades" class="text-3xl font-extrabold text-negro">Entrena con propósito</h2>
+    <a href="{% url 'contenido:habitos' %}" class="whitespace-nowrap text-sm font-semibold underline underline-offset-4 hover:text-rojo">Guía de hábitos</a>
   </div>
   <ul class="grid grid-cols-2 gap-3 lg:grid-cols-4">
     {% for disciplina in disciplinas %}
       <li>
-        <a href="{% url 'catalogo:tienda' %}?disciplina={{ disciplina.slug }}" class="group block">
+        {# Cada disciplina lleva a su apartado de Hábitos (consejos, artículo y productos para practicarla) #}
+        <a href="{% url 'contenido:disciplina' disciplina.slug %}" class="group block">
           <div class="aspect-3/4 overflow-hidden rounded-xl bg-negro">
             {% if disciplina.imagen %}
               <img src="{{ disciplina.imagen.url }}" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">

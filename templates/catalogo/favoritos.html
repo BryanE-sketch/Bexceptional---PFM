@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block titulo %}Favoritos · Bexceptional{% endblock %}
+
+{% block contenido %}
+<div class="mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-12">
+  <p class="bx-eyebrow text-linea">Mi cuenta</p>
+  <h1 class="mt-2 text-3xl font-extrabold text-negro lg:text-4xl">Favoritos</h1>
+
+  {% if favoritos %}
+    <ul class="mt-8 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 lg:grid-cols-4">
+      {% for favorito in favoritos %}
+        {% with producto=favorito.producto %}
+        {# hx-target apunta a la tarjeta entera: al quitarlo, la respuesta vacía la hace desaparecer #}
+        <li id="favorito-{{ producto.pk }}">
+          <a href="{{ producto.get_absolute_url }}" class="group block">
+            <div class="aspect-3/4 overflow-hidden rounded-xl bg-claro-2">
+              {% with imagen=producto.imagenes.all|first %}
+                {% if imagen %}<img src="{{ imagen.imagen.url }}" alt="{{ imagen.texto_alternativo }}" loading="lazy" class="h-full w-full object-cover transition group-hover:scale-105">{% endif %}
+              {% endwith %}
+            </div>
+            <p class="mt-3 text-sm font-bold text-negro">{{ producto.nombre }}</p>
+          </a>
+          <p class="text-sm text-linea">{{ producto.categoria.nombre }} · {{ producto.precio }}&nbsp;€</p>
+          <form method="post" action="{% url 'catalogo:alternar_favorito' producto.pk %}"
+                hx-post="{% url 'catalogo:alternar_favorito' producto.pk %}" hx-target="#favorito-{{ producto.pk }}" hx-swap="outerHTML">
+            {% csrf_token %}
+            <input type="hidden" name="origen" value="lista">
+            <button type="submit" class="mt-2 text-sm font-semibold text-linea underline underline-offset-4 hover:text-magenta">
+              Quitar<span class="sr-only"> {{ producto.nombre }} de favoritos</span>
+            </button>
+          </form>
+        </li>
+        {% endwith %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="mt-8 rounded-2xl bg-claro-2 px-6 py-16 text-center">
+      <p class="text-xl font-bold text-negro">Aún no tienes favoritos</p>
+      <p class="mt-2 text-sm text-linea">Pulsa el corazón en cualquier producto para guardarlo aquí.</p>
+      <a href="{% url 'catalogo:tienda' %}" class="btn btn-oscuro mt-6">Ir a la tienda</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

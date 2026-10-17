@@ -7,7 +7,7 @@ app_name = "catalogo"
 urlpatterns = [
     path("", views.inicio, name="inicio"),
     path("producto/<slug:slug>/", views.detalle_producto, name="producto"),
-    # Provisionales: se sustituirán por las vistas reales en las próximas sesiones
-    path('tienda/', views.tienda, name='tienda'),
-    path("favoritos/", views.proximamente, {"titulo": "Favoritos"}, name="favoritos"),
+    path("tienda/", views.tienda, name="tienda"),
+    path("favoritos/", views.favoritos, name="favoritos"),
+    path("favoritos/<int:producto_id>/alternar/", views.alternar_favorito, name="alternar_favorito"),
 ]

@@ -36,7 +36,10 @@
     {# ── Información y compra ── #}
     <div class="lg:sticky lg:top-6 lg:self-start">
       <p class="bx-eyebrow text-linea">{{ producto.get_publico_display }} · {{ producto.categoria.nombre }}</p>
-      <h1 class="mt-3 text-3xl font-extrabold leading-tight text-negro">{{ producto.nombre }}</h1>
+      <div class="mt-3 flex items-start justify-between gap-4">
+        <h1 class="text-3xl font-extrabold leading-tight text-negro">{{ producto.nombre }}</h1>
+        {% include "catalogo/_boton_favorito.html" %}
+      </div>
       <p class="mt-3 text-2xl font-bold text-negro">{{ producto.precio }}&nbsp;€</p>
 
       {% if valoraciones.total %}
@@ -75,7 +78,7 @@
             <div class="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-5">
               {% for variante in tallas %}
                 <label class="relative">
-                  <input type="radio" name="variante" value="{{ variante.pk }}" class="peer sr-only" 
+                  <input type="radio" name="variante" value="{{ variante.pk }}" class="peer sr-only"
                          {% if not variante.stock %}disabled{% endif %}>
                   <span class="flex h-12 cursor-pointer items-center justify-center rounded-lg border border-black/15 text-sm font-semibold text-negro transition
                                hover:border-negro

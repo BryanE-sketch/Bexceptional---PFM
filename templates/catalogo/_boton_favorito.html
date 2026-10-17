@@ -1,0 +1,11 @@
+{# Corazón de favoritos. HTMX lo sustituye por la versión actualizada al pulsarlo. #}
+<form method="post" action="{% url 'catalogo:alternar_favorito' producto.pk %}"
+      hx-post="{% url 'catalogo:alternar_favorito' producto.pk %}" hx-swap="outerHTML" hx-disabled-elt="find button">
+  {% csrf_token %}
+  <button type="submit" aria-pressed="{% if es_favorito %}true{% else %}false{% endif %}"
+          class="flex h-12 w-12 items-center justify-center rounded-full border transition {% if es_favorito %}border-magenta bg-magenta/10 text-magenta{% else %}border-black/15 text-negro hover:border-negro{% endif %}">
+    <svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"
+         fill="{% if es_favorito %}currentColor{% else %}none{% endif %}"><path d="M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10z"/></svg>
+    <span class="sr-only">{% if es_favorito %}Quitar de favoritos{% else %}Guardar en favoritos{% endif %}</span>
+  </button>
+</form>

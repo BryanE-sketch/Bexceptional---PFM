@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ articulo.titulo }} · Bexceptional{% endblock %}
+{% block descripcion %}{{ articulo.resumen }}{% endblock %}
+
+{% block contenido %}
+<article class="mx-auto max-w-3xl px-4 py-12 lg:py-16">
+  <nav aria-label="Migas de pan" class="text-sm text-linea">
+    <a href="{% url 'contenido:habitos' %}" class="hover:text-negro">Hábitos</a>
+    {% if articulo.disciplina %}
+      <span aria-hidden="true">/</span>
+      <a href="{% url 'contenido:disciplina' articulo.disciplina.slug %}" class="hover:text-negro">{{ articulo.disciplina.nombre }}</a>
+    {% endif %}
+  </nav>
+
+  <h1 class="mt-6 text-4xl font-extrabold leading-tight text-negro">{{ articulo.titulo }}</h1>
+  <p class="mt-4 text-lg leading-relaxed text-linea">{{ articulo.resumen }}</p>
+  <p class="mt-4 text-sm text-linea">{{ articulo.publicado_en|date:"j \d\e F \d\e Y" }}{% if articulo.autor %} · {{ articulo.autor.first_name|default:"Equipo Bexceptional" }}{% endif %}</p>
+  <div class="bx-barra mt-6"></div>
+
+  {# linebreaks convierte cada salto de línea en un párrafo (y escapa el HTML: nada de código inyectado) #}
+  <div class="mt-8 space-y-5 text-[17px] leading-relaxed text-tinta">
+    {{ articulo.cuerpo|linebreaks }}
+  </div>
+
+  {% if articulo.fuentes.all %}
+    <section class="mt-12 rounded-2xl bg-claro-2 p-6" aria-labelledby="titulo-fuentes">
+      <h2 id="titulo-fuentes" class="text-lg font-extrabold text-negro">Fuentes y para saber más</h2>
+      <ul class="mt-4 space-y-3 text-sm">
+        {% for fuente in articulo.fuentes.all %}
+          <li>
+            <a href="{{ fuente.url }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-negro underline underline-offset-4 hover:text-rojo">
+              {{ fuente.nombre }}<span class="sr-only"> (abre en otra pestaña)</span> ↗
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  <p class="mt-8 text-xs text-linea">Contenido divulgativo. No sustituye el consejo de un profesional sanitario.</p>
+</article>
+
+{% if otros %}
+<section class="bg-claro-2" aria-labelledby="titulo-otros">
+  <div class="mx-auto max-w-7xl px-4 py-16 lg:px-8">
+    <h2 id="titulo-otros" class="text-2xl font-extrabold text-negro">Sigue leyendo</h2>
+    <ul class="mt-6 grid gap-6 md:grid-cols-3">
+      {% for a in otros %}<li>{% include "contenido/_tarjeta_articulo.html" with articulo=a %}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

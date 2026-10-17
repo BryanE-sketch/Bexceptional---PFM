@@ -1,5 +1,7 @@
+import tempfile
+
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from catalogo.models import Categoria
 
@@ -61,6 +63,7 @@ class FichaProductoTests(TestCase):
         self.assertContains(respuesta, "(agotada)")
 
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())  # las 45 imágenes van a una carpeta temporal
 class CargarCatalogoDemoTests(TestCase):
     """El comando de datos de demostración debe ser fiable: se ejecuta en cada despliegue nuevo."""
 

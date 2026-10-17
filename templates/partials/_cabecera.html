@@ -46,8 +46,11 @@
             <a class="flex h-16 items-center text-naranja hover:text-crema" href="{% url 'contenido:habitos' %}">Hábitos</a>
             <div class="invisible absolute left-0 top-full w-72 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
               <ul class="space-y-2 rounded-b-xl border border-white/10 bg-negro p-6 text-sm font-medium text-gris">
-                <li><a class="hover:text-naranja" href="{% url 'contenido:habitos' %}">Guía de hábitos</a></li>
-                <li><a class="hover:text-naranja" href="{% url 'contenido:habitos' %}#descargables">Rastreadores descargables</a></li>
+                <li><a class="font-semibold text-crema hover:text-naranja" href="{% url 'contenido:habitos' %}">Guía de hábitos</a></li>
+                {% for disciplina in nav_disciplinas %}
+                  <li><a class="hover:text-naranja" href="{% url 'contenido:disciplina' disciplina.slug %}">{{ disciplina.nombre }}</a></li>
+                {% endfor %}
+                <li class="border-t border-white/10 pt-2"><a class="hover:text-naranja" href="{% url 'contenido:habitos' %}#descargables">Rastreadores descargables</a></li>
                 <li><a class="hover:text-naranja" href="{% url 'contenido:habitos' %}#articulos">Artículos con evidencia</a></li>
               </ul>
             </div>
@@ -73,9 +76,9 @@
       <a href="{% url 'cuentas:perfil' %}" class="flex h-11 w-11 items-center justify-center rounded-full hover:text-naranja" aria-label="Mi cuenta">
         <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
       </a>
-      <a href="{% url 'carrito:detalle' %}" class="relative flex h-11 w-11 items-center justify-center rounded-full hover:text-naranja" aria-label="Carrito, {{ carrito_cantidad }} artículo{{ carrito_cantidad|pluralize }}">
+      <a href="{% url 'carrito:detalle' %}" class="relative flex h-11 w-11 items-center justify-center rounded-full hover:text-naranja" aria-label="Carrito">
         <svg aria-hidden="true" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 7h12l1 14H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-      {% include "carrito/_contador.html" %}
+        {% include "carrito/_contador.html" %}
       </a>
     </div>
   </div>
