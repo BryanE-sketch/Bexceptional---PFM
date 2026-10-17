@@ -1,0 +1,59 @@
+# Integración continua: en cada push y pull request GitHub ejecuta todos los tests
+# contra un PostgreSQL real, igual que en producción.
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: bexceptional
+          POSTGRES_PASSWORD: bexceptional
+          POSTGRES_DB: bexceptional
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+
+    env:
+      SECRET_KEY: clave-solo-para-los-tests
+      DEBUG: "True"
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_URL: postgres://bexceptional:bexceptional@localhost:5432/bexceptional
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+          npm ci
+
+      - name: Compilar el frontend (las plantillas lo necesitan)
+        run: |
+          npm run css:build
+          npm run build
+
+      - name: Comprobaciones de Django
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+
+      - name: Tests
+        run: python manage.py test

@@ -57,8 +57,7 @@
             <img src="{{ recurso.imagen_previa.url }}" alt="Vista previa de {{ recurso.titulo }}" class="w-28 shrink-0 rounded-lg shadow-md sm:w-36">
           {% endif %}
           <div class="flex flex-col">
-            <p class="bx-eyebrow text-rojo">{{ recurso.get_tipo_display }}</p>
-            <h3 class="mt-2 text-xl font-extrabold text-negro">{{ recurso.titulo }}</h3>
+            <h3 class="text-xl font-extrabold text-negro">{{ recurso.titulo }}</h3>
             <p class="mt-2 flex-1 text-sm leading-relaxed text-linea">{{ recurso.descripcion }}</p>
             <form method="post" action="{% url 'contenido:descargar' recurso.slug %}" class="mt-4">
               {% csrf_token %}

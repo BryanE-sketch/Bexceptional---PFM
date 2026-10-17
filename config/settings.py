@@ -30,7 +30,18 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+def lista_entorno(nombre):
+    """'a.com, b.com' → ['a.com', 'b.com'] (sin huecos ni elementos vacíos)."""
+    return [valor.strip() for valor in os.getenv(nombre, "").split(",") if valor.strip()]
+
+
+ALLOWED_HOSTS = lista_entorno("ALLOWED_HOSTS")
+# Render nos dice su dominio (bexceptional.onrender.com) en esta variable: lo añadimos solo
+if os.getenv("RENDER_EXTERNAL_HOSTNAME"):
+    ALLOWED_HOSTS.append(os.environ["RENDER_EXTERNAL_HOSTNAME"])
+
+# Orígenes desde los que se aceptan formularios POST (https://bexceptional.es, ...)
+CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host not in ("localhost", "127.0.0.1")]
 
 # Application definition
 
@@ -40,7 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'config.apps.EstaticosConfig',   # = django.contrib.staticfiles, pero sin publicar static/src/
     'django_htmx',
     'rest_framework',
     'django_filters',
@@ -62,6 +73,9 @@ AUTH_USER_MODEL = 'cuentas.Usuario'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise sirve los estáticos (CSS, JS, iconos) desde el propio Django, comprimidos
+    # y con caché larga. Va justo después de SecurityMiddleware.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -99,7 +113,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     "default": dj_database_url.config(
         conn_max_age=600,
-        conn_health_checks=True,
+        conn_health_checks=True,   # Neon "duerme" la base de datos: comprobamos la conexión antes de usarla
     )
 }
 
@@ -141,6 +155,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
+# Carpeta donde "collectstatic" reúne todos los estáticos para producción (la ignora git)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -148,9 +164,60 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Archivos subidos (imágenes de producto). En producción se usará Cloudinary.
+# Archivos subidos (imágenes de producto). En local van a la carpeta media/.
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# ── Almacenamiento: dónde se guardan estáticos y archivos subidos ──
+# En local: disco. En producción:
+#   - estáticos → WhiteNoise con nombres con hash (main.4f2a9c.css): el navegador los guarda
+#     en caché un año y, al cambiar el archivo, cambia el nombre (adiós al problema de la caché).
+#   - archivos subidos → Cloudinary, porque el disco de Render se borra en cada despliegue.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
+if not DEBUG:
+    STORAGES["staticfiles"] = {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}
+
+# Cloudinary solo se activa si existe CLOUDINARY_URL (cloudinary://clave:secreto@nombre)
+USAR_CLOUDINARY = bool(os.getenv("CLOUDINARY_URL"))
+if USAR_CLOUDINARY:
+    STORAGES["default"] = {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"}
+
+
+# ── Seguridad en producción (solo cuando DEBUG=False) ─────────
+if not DEBUG:
+    # Render recibe HTTPS y nos pasa la petición por HTTP con esta cabecera
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True             # http:// → https://
+    SESSION_COOKIE_SECURE = True           # la cookie de sesión solo viaja por HTTPS
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30  # 30 días: el navegador recuerda usar siempre HTTPS
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "same-origin"
+
+# ── Caché ────────────────────────────────────────────────────
+# El bloqueo por intentos de acceso fallidos se guarda en caché. En producción hay
+# varios procesos (workers de gunicorn): una caché en memoria no se compartiría entre
+# ellos, así que usamos una tabla de la base de datos (python manage.py createcachetable).
+if not DEBUG:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+            "LOCATION": "cache_bexceptional",
+        }
+    }
+
+# ── Registro de errores ──────────────────────────────────────
+# Con DEBUG=False Django no muestra los errores: los enviamos a la consola para verlos
+# en la pestaña "Logs" de Render.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"consola": {"class": "logging.StreamHandler"}},
+    "loggers": {"django": {"handlers": ["consola"], "level": os.getenv("NIVEL_LOG", "WARNING")}},
+}
 
 
 # ── API REST (Django REST Framework) ──────────────────────────

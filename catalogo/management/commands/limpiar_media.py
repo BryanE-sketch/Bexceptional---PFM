@@ -11,6 +11,7 @@ from pathlib import Path
 
 from django.apps import apps
 from django.conf import settings
+from django.core.files.storage import FileSystemStorage, default_storage
 from django.core.management.base import BaseCommand
 from django.db.models import FileField
 
@@ -22,6 +23,10 @@ class Command(BaseCommand):
         parser.add_argument("--borrar", action="store_true", help="Borra los archivos huérfanos.")
 
     def handle(self, *args, **opciones):
+        # En producción los archivos están en Cloudinary, no en disco: este comando no aplica
+        if not isinstance(default_storage, FileSystemStorage):
+            self.stdout.write("Los archivos no están en disco (Cloudinary): este comando solo sirve en local.")
+            return
         raiz = Path(settings.MEDIA_ROOT)
         if not raiz.is_dir():
             self.stdout.write("No hay carpeta media/.")

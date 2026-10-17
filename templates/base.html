@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block titulo %}Bexceptional · Rise above the ordinary{% endblock %}</title>
-  <meta name="description" content="{% block descripcion %}Ropa deportiva y una guía de hábitos respaldada por la ciencia para quien busca superarse cada día.{% endblock %}">
+  <title>{% block titulo %}Bexceptional{% endblock %}</title>
+  <meta name="description" content="{% block descripcion %}Ropa deportiva y una guía de hábitos respaldada por la ciencia para quien quiere superarse cada día.{% endblock %}">
 
   <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
   <link rel="apple-touch-icon" href="{% static 'img/favicon-180.png' %}">
@@ -14,14 +14,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
-    {% block head_extra %}{% endblock %}
+  {% block head_extra %}{% endblock %}
 </head>
 <body class="flex min-h-screen flex-col bg-claro font-sans text-tinta antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-crema focus:px-4 focus:py-2 focus:text-negro">Saltar al contenido</a>
 
   {% include "partials/_cabecera.html" %}
 
- <main id="contenido" class="flex-1">
+  <main id="contenido" class="flex-1">
     {% if messages %}
       <div class="mx-auto max-w-7xl px-4 pt-6 lg:px-8" role="status">
         {% for message in messages %}

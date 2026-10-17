@@ -20,10 +20,10 @@
 
   <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
 
-    {# ── Imágenes ── #}
+    {# ── Imágenes (con dos fotos, delante y detrás, se ven una al lado de la otra) ── #}
     <div class="grid gap-3 sm:grid-cols-2">
       {% for imagen in imagenes %}
-        <div class="aspect-3/4 overflow-hidden rounded-xl bg-claro-2 {% if forloop.first %}sm:col-span-2{% endif %}">
+        <div class="aspect-3/4 overflow-hidden rounded-xl bg-claro-2 {% if forloop.first and imagenes|length != 2 %}sm:col-span-2{% endif %}">
           <img src="{{ imagen.imagen.url }}" alt="{{ imagen.texto_alternativo }}" class="h-full w-full object-cover">
         </div>
       {% empty %}

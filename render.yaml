@@ -1,0 +1,29 @@
+# Infraestructura como código: Render lee este archivo ("Blueprint") y crea el servicio.
+# Base de datos: Neon (PostgreSQL gratuito, no caduca). Imágenes: Cloudinary.
+services:
+  - type: web
+    name: bexceptional
+    runtime: python
+    plan: free
+    region: frankfurt            # misma región que la base de datos de Neon (menos latencia)
+    branch: main
+    autoDeploy: true             # cada git push a main despliega
+    buildCommand: bash build.sh
+    startCommand: gunicorn config.wsgi:application --workers 2 --timeout 60
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true      # Render genera una clave aleatoria; nadie la conoce
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS       # el dominio propio (bexceptional.onrender.com se añade solo)
+        sync: false
+      - key: DATABASE_URL        # cadena de conexión de Neon
+        sync: false
+      - key: CLOUDINARY_URL      # cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+        sync: false
+      - key: CARGAR_DEMO         # True solo en el primer despliegue
+        value: "True"
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD   # borrarla de Render tras el primer despliegue
+        sync: false

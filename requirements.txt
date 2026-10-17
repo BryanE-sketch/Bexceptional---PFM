@@ -11,3 +11,7 @@ djangorestframework==3.18.3
 drf-spectacular==0.30.0
 django-filter==26.2
 django-vite==3.2.0
+gunicorn==26.2.0
+whitenoise==6.12.0
+cloudinary==1.46.3
+django-cloudinary-storage==0.3.0
