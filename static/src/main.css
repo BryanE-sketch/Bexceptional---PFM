@@ -6,6 +6,7 @@
 
 /* Solo buscamos clases en nuestras plantillas (más rápido y sin sorpresas) */
 @source "../../templates";
+@source "../../frontend/src";
 
 /* Identidad de marca: estos nombres crean clases como bg-negro, text-naranja… */
 @theme {

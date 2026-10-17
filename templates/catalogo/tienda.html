@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load django_vite %}
+
+{% block titulo %}Tienda · Bexceptional{% endblock %}
+
+{% block head_extra %}
+  {# En desarrollo: conexión con Vite para recargar al instante. En producción estas dos etiquetas no generan nada. #}
+  {% vite_hmr_client %}
+  {% vite_react_refresh %}
+  {% vite_asset 'src/tienda/main.jsx' %}
+{% endblock %}
+
+{% block contenido %}
+  {# React se monta aquí. Las URLs de la API se las pasa Django para no escribirlas a mano en JavaScript. #}
+  <div id="tienda"
+       data-url-productos="{% url 'api:producto-list' %}"
+       data-url-filtros="{% url 'api:filtros' %}">
+    <div class="mx-auto max-w-7xl px-4 py-12 lg:px-8">
+      <h1 class="text-3xl font-extrabold text-negro">Tienda</h1>
+      <p class="mt-4 text-sm text-linea">Cargando productos…</p>
+      <noscript>
+        <p class="mt-4 rounded-xl bg-claro-2 p-4 text-sm text-negro">
+          La tienda necesita JavaScript para filtrar productos.
+          Mientras tanto, puedes ver las novedades en la <a class="underline" href="{% url 'catalogo:inicio' %}">portada</a>.
+        </p>
+      </noscript>
+    </div>
+  </div>
+{% endblock %}

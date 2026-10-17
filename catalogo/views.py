@@ -59,6 +59,14 @@ def detalle_producto(request, slug):
     return render(request, "catalogo/producto.html", contexto)
 
 
+def tienda(request):
+    """
+    Página de la tienda. Django solo pone la estructura (cabecera, pie, carrito);
+    el listado con filtros lo pinta React pidiendo los datos a la API (/api/productos/).
+    """
+    return render(request, 'catalogo/tienda.html')
+
+
 def proximamente(request, titulo):
     """Página provisional para las secciones que aún estamos construyendo."""
     return render(request, "paginas/proximamente.html", {"titulo": titulo})

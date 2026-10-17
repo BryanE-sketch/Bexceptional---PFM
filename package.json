@@ -4,14 +4,20 @@
   "private": true,
   "scripts": {
     "css:build": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css --minify",
-    "css:watch": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css --watch", 
-    "htmx:copiar": "mkdir -p static/vendor && cp node_modules/htmx.org/dist/htmx.min.js static/vendor/htmx.min.js"
+    "css:watch": "tailwindcss -i ./static/src/main.css -o ./static/css/main.css --watch",
+    "htmx:copiar": "mkdir -p static/vendor && cp node_modules/htmx.org/dist/htmx.min.js static/vendor/htmx.min.js",
+    "dev": "vite",
+    "build": "vite build"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.3",
-    "tailwindcss": "^4.3.3"
+    "@vitejs/plugin-react": "^6.1.2",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.4"
   },
   "dependencies": {
-    "htmx.org": "^2.0.11"
+    "htmx.org": "^2.0.11",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   }
 }

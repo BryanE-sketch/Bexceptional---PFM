@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'drf_spectacular',
+    'django_vite',
     
     # Apps de Bexceptional
     'cuentas',
@@ -171,4 +172,17 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Catálogo público de la tienda: productos, variantes y opciones de filtrado.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+}
+
+# ── React con Vite (django-vite) ──────────────────────────────
+# Modo desarrollo (VITE_DEV=True): los scripts se cargan desde el servidor de Vite
+# (npm run dev) y los cambios en React se ven al instante.
+# Modo normal: se usan los archivos compilados con "npm run build" en static/dist/.
+DJANGO_VITE = {
+    'default': {
+        'dev_mode': os.getenv('VITE_DEV', 'False') == 'True',
+        'dev_server_port': 5173,
+        'static_url_prefix': 'dist',
+        'manifest_path': BASE_DIR / 'static' / 'dist' / 'manifest.json',
+    }
 }
