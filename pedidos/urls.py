@@ -1,10 +1,10 @@
 from django.urls import path
 
-from catalogo.views import proximamente
+from . import views
 
 app_name = "pedidos"
 
 urlpatterns = [
-    # Provisional: el proceso de pago (CU-04) se construye en la siguiente entrega
-    path("finalizar-compra/", proximamente, {"titulo": "Finalizar compra"}, name="checkout"),
+    path("finalizar-compra/", views.checkout, name="checkout"),
+    path("cuenta/pedidos/<str:numero>/", views.detalle, name="detalle"),
 ]
