@@ -276,7 +276,25 @@ class Command(BaseCommand):
         disciplina.orden = datos["orden"]
         disciplina.activa = True
         disciplina.save()
+        self.foto_disciplina(disciplina)
         return disciplina
+
+    def foto_disciplina(self, disciplina):
+        """
+        Si la disciplina no tiene foto, usa demo/disciplinas/<slug>.webp (o .jpg / .png).
+        Así la foto viaja con el repositorio y llega a producción (Cloudinary) en el despliegue.
+        Si no hay archivo, la web muestra el fénix como imagen por defecto.
+        """
+        if disciplina.imagen:
+            return
+        carpeta = Path(settings.BASE_DIR) / "demo" / "disciplinas"
+        for extension in ("webp", "jpg", "jpeg", "png"):
+            ruta = carpeta / f"{disciplina.slug}.{extension}"
+            if ruta.exists():
+                with ruta.open("rb") as archivo:
+                    disciplina.imagen.save(ruta.name, File(archivo))
+                self.stdout.write(f"  Foto añadida: {disciplina.nombre}")
+                return
 
     def articulo(self, datos, disciplina):
         articulo, _ = Articulo.objects.update_or_create(

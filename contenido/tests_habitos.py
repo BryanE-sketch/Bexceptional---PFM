@@ -75,3 +75,32 @@ class DescargasTests(TestCase):
 
     def test_descargar_con_get_no_cuenta(self):
         self.assertEqual(self.client.get(reverse("contenido:descargar", args=["x"])).status_code, 405)
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class FotoDisciplinaTests(TestCase):
+    """La foto de cada disciplina se toma de demo/disciplinas/<slug>.webp si existe."""
+
+    def test_usa_la_foto_de_demo_y_no_pisa_una_existente(self):
+        from pathlib import Path
+
+        from contenido.management.commands.cargar_habitos_demo import Command
+
+        base = Path(tempfile.mkdtemp())
+        (base / "demo" / "disciplinas").mkdir(parents=True)
+        (base / "demo" / "disciplinas" / "correr.webp").write_bytes(b"foto")
+        correr = Disciplina.objects.create(nombre="Correr", slug="correr")
+        pesas = Disciplina.objects.create(nombre="Levantar pesas", slug="levantar-pesas")
+        comando = Command(stdout=StringIO())
+
+        with override_settings(BASE_DIR=base):
+            comando.foto_disciplina(correr)
+            comando.foto_disciplina(pesas)          # no tiene archivo: se queda sin foto (fénix)
+        self.assertTrue(correr.imagen.name.startswith("disciplinas/correr"))
+        self.assertFalse(pesas.imagen)
+
+        # Una foto subida desde el panel no se reemplaza
+        nombre = correr.imagen.name
+        with override_settings(BASE_DIR=base):
+            comando.foto_disciplina(correr)
+        self.assertEqual(correr.imagen.name, nombre)
