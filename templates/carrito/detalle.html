@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block titulo %}Carrito · Bexceptional{% endblock %}
+
+{% block contenido %}
+<div class="mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-12">
+  <h1 class="text-3xl font-extrabold text-negro lg:text-4xl">Tu carrito</h1>
+
+  {# Avisos de HTMX. Está FUERA del bloque que se sustituye para que el lector de pantalla los anuncie. #}
+  {% include "carrito/_aviso.html" %}
+
+  {% include "carrito/_contenido.html" %}
+</div>
+{% endblock %}

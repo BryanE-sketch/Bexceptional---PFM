@@ -15,6 +15,7 @@ urlpatterns = [
     path("", include("contenido.urls")),
     path("", include("carrito.urls")),
     path("", include("cuentas.urls")),
+    path("", include("pedidos.urls")),
 ]
 
 # Solo en desarrollo: Django sirve las imágenes subidas

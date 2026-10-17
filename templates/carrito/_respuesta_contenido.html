@@ -1,0 +1,4 @@
+{# Respuesta de HTMX al cambiar o eliminar: el bloque del carrito + aviso y contador "fuera de banda" #}
+{% include "carrito/_contenido.html" %}
+{% include "carrito/_aviso.html" with oob=True %}
+{% include "carrito/_contador.html" with oob=True %}
