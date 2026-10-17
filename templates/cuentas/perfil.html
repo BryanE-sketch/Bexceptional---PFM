@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block titulo %}Mi cuenta · Bexceptional{% endblock %}
+
+{% block contenido %}
+<div class="mx-auto max-w-5xl px-4 py-8 lg:px-8 lg:py-12">
+  <div class="flex flex-col gap-6 border-b border-black/10 pb-8 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="bx-eyebrow text-linea">Mi cuenta</p>
+      <h1 class="mt-2 text-3xl font-extrabold text-negro">Hola, {{ user.first_name|default:user.email }}</h1>
+      <p class="mt-2 text-sm text-linea">{{ user.email }} · Cliente desde {{ user.date_joined|date:"F \d\e Y" }}</p>
+    </div>
+    {# Cerrar sesión con POST: un simple enlace permitiría a otra web cerrarte la sesión #}
+    <form method="post" action="{% url 'cuentas:salir' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn border border-black/15 text-negro hover:border-negro">Cerrar sesión</button>
+    </form>
+  </div>
+
+  <section class="mt-10" aria-labelledby="titulo-pedidos">
+    <h2 id="titulo-pedidos" class="text-xl font-extrabold text-negro">Mis pedidos</h2>
+    {% if pedidos %}
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full min-w-[32rem] text-left text-sm">
+          <thead class="border-b border-black/10 text-linea">
+            <tr><th class="py-3 font-semibold">Número</th><th class="py-3 font-semibold">Fecha</th><th class="py-3 font-semibold">Estado</th><th class="py-3 text-right font-semibold">Total</th></tr>
+          </thead>
+          <tbody class="divide-y divide-black/10">
+            {% for pedido in pedidos %}
+              <tr>
+                <td class="py-3 font-semibold text-negro">{{ pedido.numero }}</td>
+                <td class="py-3">{{ pedido.creado|date:"j M Y" }}</td>
+                <td class="py-3"><span class="rounded-full bg-claro-2 px-3 py-1 text-xs font-bold text-negro">{{ pedido.get_estado_display }}</span></td>
+                <td class="py-3 text-right font-semibold">{{ pedido.total }}&nbsp;€</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="mt-4 rounded-2xl bg-claro-2 p-8 text-center">
+        <p class="font-semibold text-negro">Todavía no has hecho ningún pedido.</p>
+        <a href="{% url 'catalogo:tienda' %}" class="btn btn-oscuro mt-4">Ir a la tienda</a>
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

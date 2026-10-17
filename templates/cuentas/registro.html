@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block titulo %}Crear cuenta · Bexceptional{% endblock %}
+
+{% block contenido %}
+<section class="mx-auto max-w-md px-4 py-12 lg:py-20">
+  <p class="bx-eyebrow text-linea">Mi cuenta</p>
+  <h1 class="mt-2 text-3xl font-extrabold text-negro">Crea tu cuenta</h1>
+  <p class="mt-2 text-sm text-linea">Para seguir tus pedidos y guardar tus favoritos.</p>
+
+  <form method="post" class="mt-8 space-y-5" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% include "cuentas/_campo.html" with campo=form.first_name %}
+    {% include "cuentas/_campo.html" with campo=form.email %}
+    {% include "cuentas/_campo.html" with campo=form.password1 %}
+    <p class="-mt-3 text-xs text-linea">Mínimo 8 caracteres. Evita contraseñas comunes o solo con números.</p>
+    {% include "cuentas/_campo.html" with campo=form.password2 %}
+    {% include "cuentas/_campo.html" with campo=form.acepta_privacidad %}
+    <button type="submit" class="btn btn-oscuro w-full">Crear cuenta</button>
+  </form>
+
+  <p class="mt-8 text-center text-sm text-linea">
+    ¿Ya tienes cuenta?
+    <a href="{% url 'cuentas:entrar' %}{% if next %}?next={{ next|urlencode }}{% endif %}" class="font-semibold text-negro underline underline-offset-4">Inicia sesión</a>
+  </p>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{# Un campo de formulario con su etiqueta, ayuda y errores, con el estilo de la marca #}
+<div>
+  {% if campo.field.widget.input_type == "checkbox" %}
+    <label class="flex items-start gap-3 text-sm text-tinta">
+      <input type="checkbox" name="{{ campo.html_name }}" id="{{ campo.id_for_label }}" class="mt-0.5 h-5 w-5 shrink-0 accent-negro"
+             {% if campo.value %}checked{% endif %}{% if campo.errors %} aria-invalid="true" aria-describedby="{{ campo.id_for_label }}_error"{% endif %}>
+      <span>{{ campo.label }}</span>
+    </label>
+  {% else %}
+    <label for="{{ campo.id_for_label }}" class="text-sm font-semibold text-negro">{{ campo.label }}</label>
+    <input type="{{ campo.field.widget.input_type }}" name="{{ campo.html_name }}" id="{{ campo.id_for_label }}"
+           {% if campo.value and campo.field.widget.input_type != "password" %}value="{{ campo.value }}"{% endif %}
+           {% for nombre, valor in campo.field.widget.attrs.items %} {{ nombre }}="{{ valor }}"{% endfor %}
+           {% if campo.field.required %}required{% endif %}
+           {% if campo.errors %}aria-invalid="true" aria-describedby="{{ campo.id_for_label }}_error"{% endif %}
+           class="mt-2 block h-12 w-full rounded-lg border bg-white px-4 text-negro focus:border-negro focus:outline-none {% if campo.errors %}border-magenta{% else %}border-black/15{% endif %}">
+  {% endif %}
+  {% if campo.errors %}
+    <p id="{{ campo.id_for_label }}_error" class="mt-2 text-sm font-semibold text-magenta">{{ campo.errors|join:" " }}</p>
+  {% endif %}
+</div>

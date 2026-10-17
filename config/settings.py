@@ -186,3 +186,8 @@ DJANGO_VITE = {
         'manifest_path': BASE_DIR / 'static' / 'dist' / 'manifest.json',
     }
 }
+
+# ── Cuentas ───────────────────────────────────────────────────
+LOGIN_URL = 'cuentas:entrar'             # adónde manda @login_required
+LOGIN_REDIRECT_URL = 'cuentas:perfil'    # tras entrar, si no hay ?next=
+LOGOUT_REDIRECT_URL = 'catalogo:inicio'  # tras cerrar sesión
