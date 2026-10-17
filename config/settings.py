@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_htmx',
+    'rest_framework',
+    'django_filters',
+    'drf_spectacular',
+    
     # Apps de Bexceptional
     'cuentas',
     'catalogo',
@@ -146,3 +150,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Archivos subidos (imágenes de producto). En producción se usará Cloudinary.
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+# ── API REST (Django REST Framework) ──────────────────────────
+REST_FRAMEWORK = {
+    # La API del catálogo es pública y de solo lectura
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
+    # En desarrollo, además del JSON, la API navegable para probar en el navegador
+    'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer']
+    + (['rest_framework.renderers.BrowsableAPIRenderer'] if DEBUG else []),
+    # Límite de peticiones por IP para frenar abusos (bots que rastrean la tienda)
+    'DEFAULT_THROTTLE_CLASSES': ['rest_framework.throttling.AnonRateThrottle'],
+    'DEFAULT_THROTTLE_RATES': {'anon': '120/min'},
+    # Documentación automática OpenAPI
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API de Bexceptional',
+    'DESCRIPTION': 'Catálogo público de la tienda: productos, variantes y opciones de filtrado.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}

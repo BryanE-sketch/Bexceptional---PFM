@@ -2,9 +2,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # API REST
+    path('api/', include('catalogo.api_urls')),
+    path('api/esquema/', SpectacularAPIView.as_view(), name='esquema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='esquema'), name='docs'),
+    # URLs de la web
     path("", include("catalogo.urls")),
     path("", include("contenido.urls")),
     path("", include("carrito.urls")),
