@@ -7,7 +7,7 @@ services:
     plan: free
     region: frankfurt            # misma región que la base de datos de Neon (menos latencia)
     branch: main
-    autoDeploy: true             # cada git push a main despliega
+    autoDeployTrigger: checksPass  # despliega solo si GitHub Actions pasa
     buildCommand: bash build.sh
     startCommand: gunicorn config.wsgi:application --workers 2 --timeout 60
     envVars:
