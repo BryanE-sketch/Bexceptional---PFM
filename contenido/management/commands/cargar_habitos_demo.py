@@ -50,8 +50,13 @@ HUBERMAN = ("Huberman Lab. Toolkit for Sleep",
             "https://www.hubermanlab.com/newsletter/toolkit-for-sleep")
 MAH = ("Mah et al. (2011). Sleep (baloncesto universitario)",
        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3119836/")
-LALLY = ("Lally et al. (2010). How are habits formed? (resumen de UCL)",
-         "https://www.ucl.ac.uk/news/2009/aug/how-long-does-it-take-form-habit")
+# La nota de prensa de UCL que citábamos antes ya no existe (404): enlazamos el artículo
+# original por su DOI (enlace permanente) y un resumen en abierto de la British Psychological Society.
+LALLY = ("Lally et al. (2010). How are habits formed: Modelling habit formation in the real world. "
+         "European Journal of Social Psychology",
+         "https://doi.org/10.1002/ejsp.674")
+LALLY_RESUMEN = ("British Psychological Society. How to form a habit (resumen del estudio de Lally)",
+                 "https://bps.org.uk/research-digest/how-form-habit")
 
 DISCIPLINAS = {
     "levantar-pesas": {
@@ -236,7 +241,7 @@ ARTICULO_GENERAL = {
         "estiramientos después de lavarte los dientes) y regístralo.\n"
         "Rise above the ordinary no va de un gran día, sino de muchos días normales bien hechos."
     ),
-    "fuentes": [LALLY],
+    "fuentes": [LALLY, LALLY_RESUMEN],
 }
 
 
