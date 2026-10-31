@@ -4,8 +4,12 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+from config.views import salud
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # Comprobación de estado para monitorización
+    path("salud/", salud, name="salud"),
     # API REST
     path('api/', include('catalogo.api_urls')),
     path('api/esquema/', SpectacularAPIView.as_view(), name='esquema'),
