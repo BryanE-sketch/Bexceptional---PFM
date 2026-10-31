@@ -15,9 +15,11 @@
 
 Proyecto Final del **Máster en Desarrollo Full Stack**.
 
+**Demo:** [bexceptional.onrender.com](https://bexceptional.onrender.com) · Alojada en el plan gratuito de Render: en horario laboral se mantiene activa; fuera de él, la primera visita puede tardar hasta un minuto.
+
 **Bexceptional** es una tienda online de ropa deportiva y una comunidad que
 promueve la disciplina, la constancia y la superación personal, inspirada en
-el concepto estoico de *areté*: la excelencia que se practica cada día.
+el concepto estoico de _areté_: la excelencia que se practica cada día.
 
 ## Funcionalidades
 
@@ -32,14 +34,14 @@ el concepto estoico de *areté*: la excelencia que se practica cada día.
 
 ## Tecnologías
 
-| Capa | Tecnología |
-|------|------------|
-| Backend | Python 3.13 · Django 5.2 · Django REST Framework · django-filter |
-| Base de datos | PostgreSQL (Neon en producción) |
-| Frontend | Plantillas de Django · HTMX · Tailwind CSS 4 · React 19 (Vite) |
-| Imágenes | Pillow · Cloudinary (django-cloudinary-storage) |
-| Documentación de la API | drf-spectacular (Swagger) |
-| Despliegue | Render · gunicorn · WhiteNoise · GitHub Actions |
+| Capa                    | Tecnología                                                       |
+| ----------------------- | ---------------------------------------------------------------- |
+| Backend                 | Python 3.13 · Django 5.2 · Django REST Framework · django-filter |
+| Base de datos           | PostgreSQL (Neon en producción)                                  |
+| Frontend                | Plantillas de Django · HTMX · Tailwind CSS 4 · React 19 (Vite)   |
+| Imágenes                | Pillow · Cloudinary (django-cloudinary-storage)                  |
+| Documentación de la API | drf-spectacular (Swagger)                                        |
+| Despliegue              | Render · gunicorn · WhiteNoise · GitHub Actions                  |
 
 ## Puesta en marcha en local
 
@@ -59,13 +61,14 @@ Tests: `python manage.py test`
 
 ## Despliegue
 
-| Servicio | Uso | Plan |
-|----------|-----|------|
-| Render | Servidor web (gunicorn + WhiteNoise) | Gratuito |
-| Neon | PostgreSQL | Gratuito |
-| Cloudinary | Imágenes y archivos subidos | Gratuito |
-| GitHub Actions | Tests en cada push | Gratuito |
-| Dominio propio | — | Único coste del proyecto |
+| Servicio       | Uso                                  | Plan                     |
+| -------------- | ------------------------------------ | ------------------------ |
+| Render         | Servidor web (gunicorn + WhiteNoise) | Gratuito                 |
+| Neon           | PostgreSQL                           | Gratuito                 |
+| Cloudinary     | Imágenes y archivos subidos          | Gratuito                 |
+| GitHub Actions | Tests en cada push y servidor activo | Gratuito                 |
+|                | en horario laboral                   |                          |
+| Dominio propio | —                                    | Único coste del proyecto |
 
 `render.yaml` describe el servicio y `build.sh` los pasos de cada despliegue
 (dependencias, compilación del frontend, estáticos, migraciones y datos iniciales).
