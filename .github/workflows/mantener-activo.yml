@@ -1,0 +1,17 @@
+# Render (plan gratuito) apaga el servidor tras 15 minutos sin visitas y tarda en volver a arrancar.
+# En horario laboral, cuando se revisan candidaturas, lo llamamos cada 14 minutos para que esté listo.
+name: Mantener activo
+
+on:
+  schedule:
+    - cron: "*/14 7-18 * * 1-5" # UTC: lunes a viernes, de 8:00 a 19:59 en Madrid (horario de invierno)
+  workflow_dispatch: # permite ejecutarlo a mano desde la pestaña Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Despertar el servidor
+        run: curl --fail --silent --show-error --max-time 120 --retry 2 https://bexceptional.onrender.com/salud/
